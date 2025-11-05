@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Purchase Form</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0d2b3e, #1f5d6e);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .floating-bg {
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.07);
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .floating-bg:nth-child(1) {
+      top: 10%;
+      left: 15%;
+      animation-delay: 0s;
+    }
+
+    .floating-bg:nth-child(2) {
+      bottom: 15%;
+      right: 10%;
+      width: 200px;
+      height: 200px;
+      animation-delay: 2s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-25px); }
+    }
+
+    .card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 2rem;
+      width: 95%;
+      max-width: 550px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+      animation: fadeIn 1.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+      color: #a8f0ff;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #d0f5ff;
+    }
+
+    input, textarea {
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      transition: 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 0 2px #00bcd4;
+    }
+
+    button {
+      background: #00bcd4;
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      padding: 0.8rem;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00acc1;
+      transform: translateY(-2px);
+    }
+
+    #form-status {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-bg"></div>
+  <div class="floating-bg"></div>
+
+  <div class="card">
+    <h2>Employee Purchase Form</h2>
+    <form id="employee-purchase-form">
+      <input type="hidden" name="formType" value="EmployeePurchases" />
+      <input type="hidden" name="clientSecret" value="my-super-secret-123" />
+
+      <label>Employee Name</label>
+      <input type="text" name="employeeName" required />
+
+      <label>Department</label>
+      <input type="text" name="department" required />
+
+      <label>Vendor</label>
+      <input type="text" name="vendor" required />
+
+      <label>Vendor Location</label>
+      <input type="text" name="vendorLocation" />
+
+      <label>Product/Service</label>
+      <input type="text" name="productService" required />
+
+      <label>Total Price ($)</label>
+      <input type="number" name="totalPrice" required />
+
+      <label>Date of Purchase</label>
+      <input type="date" name="dateOfPurchase" />
+
+      <label>Date of Payment</label>
+      <input type="date" name="dateOfPayment" />
+
+      <label>Receipt URL</label>
+      <input type="url" name="receiptURL" />
+
+      <label>Notes</label>
+      <textarea name="notes" rows="3" placeholder="Additional information..."></textarea>
+
+      <button type="submit">Submit Purchase</button>
+    </form>
+
+    <p id="form-status"></p>
+  </div>
+
+  <footer>© 2025 VE Economy — Employee Purchases</footer>
+
+  <script>
+    const form = document.getElementById("employee-purchase-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = Object.fromEntries(new FormData(form).entries());
+      const status = document.getElementById("form-status");
+      status.textContent = "Submitting...";
+      status.style.color = "#d0f5ff";
+
+      try {
+        const response = await fetch(
+          "https://script.google.com/macros/s/AKfycbxrmJdvX-qQvkZmAMTP9u2sOoOmT_v3ONTh-NLul7aXTj8sJUjdcHXiBPdD_GXo0To7qA/exec",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          }
+        );
+
+        const result = await response.json();
+        if (result.result === "success") {
+          status.textContent = "✅ Form submitted successfully!";
+          status.style.color = "#7CFFB2";
+          form.reset();
+        } else {
+          status.textContent = "❌ Error: " + result.error;
+          status.style.color = "#FF7C7C";
+        }
+      } catch (err) {
+        console.error(err);
+        status.textContent = "⚠️ Network error. Try again.";
+        status.style.color = "#FFC107";
+      }
+    });
+  </script>
+</body>
+</html>
